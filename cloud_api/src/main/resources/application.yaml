@@ -1,0 +1,10 @@
+server:
+  port: 9000
+
+
+config:
+  storages:
+    - path: /home/pi/sda1
+      name: sda1
+#    - path: /opt
+#      name: opt
