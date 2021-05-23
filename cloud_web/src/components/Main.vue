@@ -1,17 +1,28 @@
 <template>
   <div class="main">
-    <div>
-      <el-row>
-        存储：
-        <el-select v-model="driveName" @change="getFileList">
-          <el-option v-for="item in storageList"
-                     :key="item"
-                     :label="item"
-                     :value="item">
-          </el-option>
-        </el-select>
-      </el-row>
-    </div>
+    <el-row>
+      存储：
+      <el-select v-model="driveName" @change="getFileList">
+        <el-option v-for="item in storageList"
+                   :key="item"
+                   :label="item"
+                   :value="item">
+        </el-option>
+      </el-select>
+    </el-row>
+
+    <el-row style="margin-left: 50px">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+        <el-breadcrumb-item
+            v-for="(sub, index) in prefix.split('/')"
+            :key="sub"
+            @click.native="directGo(index)"
+        >
+          {{ sub }}
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-row>
 
     <div style="margin: 20px">
       <el-table
@@ -108,6 +119,10 @@ export default {
     look(row) {
       console.log(row.name)
     },
+    directGo(index) {
+      this.prefix = this.prefix.split('/').slice(0, index + 1).join('/')
+      this.getFileList()
+    },
     delete(row) {
       console.log(row)
     },
@@ -119,7 +134,11 @@ export default {
         return
       }
       if (row.dirFlag) {
-        this.prefix = this.prefix + '/' + row.name
+        if (this.prefix === '') {
+          this.prefix = row.name
+        } else {
+          this.prefix = this.prefix + '/' + row.name
+        }
         this.getFileList()
       } else {
         let finalUrl = 'http://192.168.31.158:8070' + this.prefix + '/' + row.name
