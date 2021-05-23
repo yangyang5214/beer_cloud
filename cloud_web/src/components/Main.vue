@@ -114,13 +114,17 @@ export default {
     handleCurrentChange() {
       this.getFileList()
     },
-    openChildDir(row, column, cell, event) {
-      this.prefix = this.prefix + '/' + row.name
-      console.log(this.prefix)
-      console.log(column)
-      console.log(cell)
-      console.log(event)
-      this.getFileList()
+    openChildDir(row, column) {
+      if (column.property !== 'name') {
+        return
+      }
+      if (row.dirFlag) {
+        this.prefix = this.prefix + '/' + row.name
+        this.getFileList()
+      } else {
+        let finalUrl = 'http://192.168.31.158:8070' + this.prefix + '/' + row.name
+        window.open(finalUrl, '_blank');
+      }
     }
   }
 
