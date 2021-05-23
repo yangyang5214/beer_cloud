@@ -91,14 +91,14 @@ export default {
   },
   methods: {
     getDriveList() {
-      this.$axios('https://www.hexianwei.com/cloud/storages').then(res => {
+      this.$axios('storages').then(res => {
         this.storageList = res.data
         this.driveName = this.storageList[0]
         this.getFileList()
       })
     },
     getFileList() {
-      this.$axios('https://www.hexianwei.com/cloud/list?prefix=' + this.prefix + '&storage=' + this.driveName + '&page=' + this.currentPage + '&pageSize=20').then(res => {
+      this.$axios('list?prefix=' + this.prefix + '&storage=' + this.driveName + '&page=' + this.currentPage + '&pageSize=20').then(res => {
         this.dataList = res.data.data
         this.currentPage = res.data.page
         this.pageSize = res.data.pageSize
