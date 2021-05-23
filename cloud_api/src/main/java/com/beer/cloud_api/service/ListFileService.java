@@ -5,6 +5,7 @@ import com.beer.cloud_api.common.ApplicationConstant;
 import com.beer.cloud_api.entity.FileEntity;
 import com.beer.cloud_api.entity.PageHelper;
 import com.beer.cloud_api.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Service
+@Slf4j
 public class ListFileService {
 
     private static Map<String, List<FileEntity>> dirMap = new HashMap<>();
@@ -34,7 +36,7 @@ public class ListFileService {
             prefix = "";
         }
         Path path = Paths.get(ApplicationConstant.storagePathMap.get(storage), prefix);
-        String finalPath = path.getFileName().toString();
+        String finalPath = path.toString();
         List<FileEntity> list = dirMap.get(finalPath);
         if (list != null) {
             if (page > pageSize * list.size()) {
@@ -63,5 +65,13 @@ public class ListFileService {
         return new PageHelper(page, pageSize, list.size(), list);
     }
 
-
+    public void delFile(String prefix, String storage) {
+        Path path = Paths.get(ApplicationConstant.storagePathMap.get(storage), prefix);
+        try {
+            log.info("delete file: {}", path.getFileName());
+            Files.delete(path);
+            dirMap.remove(path.getParent().toString());
+        } catch (IOException ignored) {
+        }
+    }
 }

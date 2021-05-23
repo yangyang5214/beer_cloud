@@ -39,4 +39,12 @@ public class ListFileController {
         return ApplicationConstant.storageList;
     }
 
+
+    @GetMapping("del")
+    public void delFile(
+            @RequestParam(value = "prefix") String prefix,
+            @RequestParam(value = "storage") String storage) {
+        listFileService.delFile(prefix, storage);
+    }
+
 }

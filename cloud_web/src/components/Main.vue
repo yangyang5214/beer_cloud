@@ -68,7 +68,7 @@
             width="100">
           <template slot-scope="scope">
             <el-button @click="look(scope.row)" type="text" size="small">查看</el-button>
-            <el-button type="text" size="small" @click="delete(scope.row)">删除</el-button>
+            <el-button type="text" size="small" @click="deleteFile(scope.row)">删除</el-button>
           </template>
         </el-table-column>
 
@@ -132,8 +132,13 @@ export default {
       }
       this.getFileList()
     },
-    delete(row) {
-      console.log(row)
+    deleteFile(row) {
+      let fileName = this.prefix + '/' + row.name
+      console.log(fileName)
+      this.$axios('del?prefix=' + fileName + '&storage=' + this.currentStorage.name).then(res => {
+        console.log(res)
+        this.getFileList()
+      })
     },
     handleCurrentChange() {
       this.getFileList()
