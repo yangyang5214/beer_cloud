@@ -16,7 +16,7 @@
 wget https://github.com/yangyang5214/beer_cloud/releases/download/1.0/cloud_api.jar
 
 # application 见👇
-java -jar cloud_api.jar --Dspring.config.location=application.yaml
+java -jar cloud_api.jar --spring.config.location=/opt/cloud/application.yaml
 
 ```
 
@@ -33,7 +33,7 @@ cd cloud_api/target
 java -jar cloud_api-0.0.1-SNAPSHOT.jar 
 
 # 或者自己指定 配置文件路径
-java -jar cloud_api-0.0.1-SNAPSHOT.jar --Dspring.config.location=application.yaml
+java -jar cloud_api-0.0.1-SNAPSHOT.jar --spring.config.location=/opt/cloud/application.yaml
 ```
 
 ### application.yaml 
