@@ -13,6 +13,17 @@
 ### 使用
 
 ```
+wget https://github.com/yangyang5214/beer_cloud/releases/download/1.0/cloud_api.jar
+
+# application 见👇
+java -jar cloud_api.jar --Dspring.config.location=application.yaml
+
+```
+
+或者自己打包
+
+
+```
 cd beer_cloud
 bash deploy.sh
 
@@ -25,7 +36,8 @@ java -jar cloud_api-0.0.1-SNAPSHOT.jar
 java -jar cloud_api-0.0.1-SNAPSHOT.jar --Dspring.config.location=application.yaml
 ```
 
-application.yaml 
+### application.yaml 
+
 ```
 server:
   port: 9000
