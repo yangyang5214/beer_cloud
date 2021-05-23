@@ -2,18 +2,22 @@
   <div class="main">
     <el-row>
       存储：
-      <el-select v-model="driveName" @change="getFileList">
+      <el-select v-model="currentStorage" @change="getFileList">
         <el-option v-for="item in storageList"
-                   :key="item"
-                   :label="item"
-                   :value="item">
+                   :key="item.name"
+                   :label="item.name"
+                   :value="item.name">
         </el-option>
       </el-select>
     </el-row>
 
     <el-row style="margin-left: 50px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+        <el-breadcrumb-item
+            @click.native="directGo(-1)"
+        >
+          Home
+        </el-breadcrumb-item>
         <el-breadcrumb-item
             v-for="(sub, index) in prefix.split('/')"
             :key="sub"
@@ -89,7 +93,7 @@ export default {
   data() {
     return {
       dataList: [],
-      driveName: '',
+      currentStorage: '',
       prefix: '',
       storageList: [],
       currentPage: 1,
@@ -98,18 +102,18 @@ export default {
     }
   },
   created() {
-    this.getDriveList()
+    this.getStorageList()
   },
   methods: {
-    getDriveList() {
+    getStorageList() {
       this.$axios('storages').then(res => {
         this.storageList = res.data
-        this.driveName = this.storageList[0]
+        this.currentStorage = this.storageList[0]
         this.getFileList()
       })
     },
     getFileList() {
-      this.$axios('list?prefix=' + this.prefix + '&storage=' + this.driveName + '&page=' + this.currentPage + '&pageSize=20').then(res => {
+      this.$axios('list?prefix=' + this.prefix + '&storage=' + this.currentStorage.name + '&page=' + this.currentPage + '&pageSize=20').then(res => {
         this.dataList = res.data.data
         this.currentPage = res.data.page
         this.pageSize = res.data.pageSize
@@ -117,10 +121,15 @@ export default {
       })
     },
     look(row) {
-      console.log(row.name)
+      let finalUrl = this.currentStorage.url + '/' + this.prefix + '/' + row.name
+      window.open(finalUrl, '_blank');
     },
     directGo(index) {
-      this.prefix = this.prefix.split('/').slice(0, index + 1).join('/')
+      if (index === -1) {
+        this.prefix = ''
+      } else {
+        this.prefix = this.prefix.split('/').slice(0, index + 1).join('/')
+      }
       this.getFileList()
     },
     delete(row) {
@@ -141,8 +150,7 @@ export default {
         }
         this.getFileList()
       } else {
-        let finalUrl = 'http://192.168.31.158:8070' + this.prefix + '/' + row.name
-        window.open(finalUrl, '_blank');
+        this.look(row)
       }
     }
   }

@@ -6,5 +6,4 @@ config:
   storages:
     - path: /home/pi/sda1
       name: sda1
-#    - path: /opt
-#      name: opt
+      url: http://192.168.31.158:8070

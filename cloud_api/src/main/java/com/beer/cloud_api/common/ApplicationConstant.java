@@ -18,8 +18,8 @@ public class ApplicationConstant implements CommandLineRunner {
     /**
      * all storagePath alias name
      */
-    public static Set<String> storagePathNames;
     public static Map<String, String> storagePathMap;
+    public static List<StoragePath> storageList;
 
 
     @Override
@@ -28,7 +28,8 @@ public class ApplicationConstant implements CommandLineRunner {
         storagePathMap = new HashMap<>(list.size());
         for (StoragePath storagePath : list) {
             storagePathMap.put(storagePath.getName(), storagePath.getPath());
+            storagePath.setPath(null);
         }
-        storagePathNames = storagePathMap.keySet();
+        storageList = list;
     }
 }
