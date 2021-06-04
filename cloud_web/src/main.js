@@ -5,8 +5,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
-// axios.defaults.baseURL = 'https://www.hexianwei.com/cloud/'
-axios.defaults.baseURL = ''
+axios.defaults.baseURL = 'http://192.168.31.158:9001'
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
 
