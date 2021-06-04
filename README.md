@@ -1,5 +1,11 @@
 # beer_cloud
 
+update 2021.06.05:
+
+用 flask 重新实现了一下 api_py/main.py , java 的可以忽略了，没啥用。。。重死了
+
+
+
 我用来管理树莓派的文件
 
 
