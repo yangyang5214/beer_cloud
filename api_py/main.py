@@ -59,7 +59,7 @@ def list_file():
     i = 0
     files = []
     total = len(os.listdir(path))
-    for file in os.listdir(path):
+    for file in sorted(os.listdir(path)):
         _path = os.path.join(path, file)
         if file.startswith('.'):
             continue
