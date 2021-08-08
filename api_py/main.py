@@ -59,7 +59,7 @@ def list_file():
     i = 0
     files = []
     total = len(os.listdir(path))
-    for file in sorted(os.listdir(path)):
+    for file in os.listdir(path):
         _path = os.path.join(path, file)
         if file.startswith('.'):
             continue
@@ -94,7 +94,8 @@ def del_file():
     if not prefix:
         return {}
     path = os.path.join(parent_path, prefix)
-    os.remove(path)
+    if len(prefix.split('/')[-1]) > 20:
+        os.remove(path)
     return {}
 
 
