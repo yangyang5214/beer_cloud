@@ -1,9 +1,0 @@
-server:
-  port: 9000
-
-
-config:
-  storages:
-    - path: /home/pi/sda1
-      name: sda1
-      url: http://192.168.31.158:8070

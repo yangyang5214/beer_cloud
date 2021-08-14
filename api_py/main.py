@@ -1,9 +1,12 @@
-import logging
 import os
 import time
+import uuid
+from urllib import parse as urlparse
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
+from image_tools import *
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -26,6 +29,11 @@ storage_mapping = {
         'url': 'http://192.168.31.158:8070',
     }
 }
+
+
+@app.route('/jrebel', methods=['GET'])
+def jrebel_code():
+    return 'https://jrebel.hexianwei.com/' + str(uuid.uuid4())
 
 
 class PageHelper():
@@ -103,6 +111,19 @@ def del_file():
     return {}
 
 
+@app.route('/crawler/param', methods=['POST'])
+def get_url_params():
+    data = request.get_json()
+    url = data.get('url')
+    if not url:
+        return {}
+    url = url.strip()
+    if not url.startswith('http'):
+        url = 'http://www.fake.com?' + url
+    url_parts = list(urlparse.urlparse(url))
+    return dict(urlparse.parse_qsl(url_parts[4]))
+
+
 @app.route('/rename')
 def rename_random():
     prefix = request.args.get("prefix")
@@ -111,11 +132,29 @@ def rename_random():
     path = os.path.join(parent_path, prefix)
     if not os.path.exists(path):
         return {}
-    final_file = prefix.split('/')[0] + '/' + str(int(time.time())) +  '.' + prefix.split('.')[-1]
+    final_file = prefix.split('/')[0] + '/' + str(int(time.time())) + '.' + prefix.split('.')[-1]
     cmd = 'mv {} {}'.format(path, os.path.join(parent_path, final_file))
     logging.info("rename cmd: {}".format(cmd))
     os.system(cmd)
     return {}
+
+
+@app.route('/img', methods=['GET'])
+def random_img():
+    source = request.args.get("source")
+    result = ImageContext().factory(source).produce()
+    if result:
+        return jsonify(result.__dict__)
+    else:
+        return jsonify({"msg": "服务器错误"})
+
+
+@app.route('/random/bed', methods=['GET'])
+def random_bed():
+    img_dir = '/home/pi/sda1/public/bed'
+    _url = random.choice(os.listdir(img_dir))
+    base_url = 'https://www.hexianwei.com/bed/'
+    return base_url + _url.strip()
 
 
 if __name__ == '__main__':
