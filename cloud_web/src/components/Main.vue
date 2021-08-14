@@ -2,11 +2,11 @@
   <div class="main">
     <el-row>
       存储：
-      <el-select v-model="currentStorage" @change="getFileList">
+      <el-select v-model="currentStorage" @change="getFileList()">
         <el-option v-for="item in storageList"
                    :key="item.name"
                    :label="item.name"
-                   :value="item.name">
+                   :value="item">
         </el-option>
       </el-select>
     </el-row>
@@ -65,8 +65,9 @@
         <el-table-column
             fixed="right"
             label="操作"
-            width="100">
+            width="300">
           <template slot-scope="scope">
+            <el-button @click="collect(scope.row)" type="text" size="small">Collect</el-button>
             <el-button @click="look(scope.row)" type="text" size="small">查看</el-button>
             <el-button type="text" size="small" @click="deleteFile(scope.row)">删除</el-button>
           </template>
@@ -93,7 +94,7 @@ export default {
   data() {
     return {
       dataList: [],
-      currentStorage: '',
+      currentStorage: {},
       prefix: '',
       storageList: [],
       currentPage: 1,
@@ -118,6 +119,14 @@ export default {
         this.currentPage = res.data.page
         this.pageSize = res.data.pageSize
         this.total = res.data.total
+      })
+    },
+    collect(row) {
+      let fileName = this.prefix + '/' + row.name
+      console.log(fileName)
+      this.$axios('rename?prefix=' + fileName + '&storage=' + this.currentStorage.name).then(res => {
+        console.log(res)
+        this.getFileList()
       })
     },
     look(row) {

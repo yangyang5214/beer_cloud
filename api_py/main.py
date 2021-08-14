@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -6,6 +7,11 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format=''
+)
 
 
 @app.route('/')
@@ -17,11 +23,6 @@ storage_mapping = {
     'sda1': {
         'path': '/home/pi/sda1',
         'name': 'sda1',
-        'url': 'http://192.168.31.158:8070',
-    },
-    'local': {
-        'path': '/Users/beer',
-        'name': 'local',
         'url': 'http://192.168.31.158:8070',
     }
 }
@@ -50,6 +51,8 @@ def list_file():
     if storage not in storage_mapping:
         return {}
     parent_path = storage_mapping.get(storage).get('path')
+    if not os.path.exists(parent_path):
+        return jsonify(PageHelper(page, pageSize, 0, []).__dict__)
     if not prefix:
         prefix = ''
     path = os.path.join(parent_path, prefix)
@@ -94,8 +97,24 @@ def del_file():
     if not prefix:
         return {}
     path = os.path.join(parent_path, prefix)
-    if len(prefix.split('/')[-1]) > 20:
+
+    if os.path.exists(path) and len(prefix.split('/')[-1]) > 20:
         os.remove(path)
+    return {}
+
+
+@app.route('/rename')
+def rename_random():
+    prefix = request.args.get("prefix")
+    storage = request.args.get("storage")
+    parent_path = storage_mapping.get(storage).get('path')
+    path = os.path.join(parent_path, prefix)
+    if not os.path.exists(path):
+        return {}
+    final_file = prefix.split('/')[0] + '/' + str(int(time.time())) +  '.' + prefix.split('.')[-1]
+    cmd = 'mv {} {}'.format(path, os.path.join(parent_path, final_file))
+    logging.info("rename cmd: {}".format(cmd))
+    os.system(cmd)
     return {}
 
 
