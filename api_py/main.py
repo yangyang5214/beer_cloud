@@ -90,6 +90,8 @@ def list_file():
                 'date': date,
                 'size': size,
             }
+            if not dir_flag and file.endswith('mp4'):
+                obj['img'] = "http://192.168.31.158:8070/maomi/" + file.replace('mp4', 'jpg')
             files.append(obj)
         i = i + 1
     return jsonify(PageHelper(page, pageSize, total, files).__dict__)
@@ -108,6 +110,7 @@ def del_file():
 
     if os.path.exists(path) and len(prefix.split('/')[-1]) > 20:
         os.remove(path)
+        os.remove(path.replace('mp4', 'jpg'))
     return {}
 
 

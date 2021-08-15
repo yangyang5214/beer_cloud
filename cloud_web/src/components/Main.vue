@@ -63,6 +63,14 @@
         </el-table-column>
 
         <el-table-column
+            prop="img"
+            label="缩略图">
+          <template slot-scope="scope">
+            <el-image :src="scope.row.img"/>
+          </template>
+        </el-table-column>
+
+        <el-table-column
             fixed="right"
             label="操作"
             width="300">
