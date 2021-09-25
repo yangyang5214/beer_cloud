@@ -1,12 +1,14 @@
 import os
 import time
 import uuid
+import logging
+from concurrent.futures import ThreadPoolExecutor
 from urllib import parse as urlparse
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from image_tools import *
+pool = ThreadPoolExecutor(2)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -81,17 +83,19 @@ def list_file():
             if os.path.isdir(_path):
                 dir_flag = True
             else:
-                stat = os.stat(_path)
-                size = stat.st_size
-                date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(stat.st_ctime)))
+                if not file.endswith('mp4'):
+                    continue
             obj = {
                 'name': file,
                 'dirFlag': dir_flag,
                 'date': date,
                 'size': size,
             }
-            if not dir_flag and file.endswith('mp4'):
-                obj['img'] = "http://192.168.31.158:8070/maomi/" + file.replace('mp4', 'jpg')
+            if not dir_flag:
+                img = file.replace('mp4', 'jpg')
+                if not os.path.exists(os.path.join(path, img)):
+                    continue
+                obj['img'] = "http://192.168.31.158:8070/maomi/" + img
             files.append(obj)
         i = i + 1
     return jsonify(PageHelper(page, pageSize, total, files).__dict__)
@@ -108,9 +112,9 @@ def del_file():
         return {}
     path = os.path.join(parent_path, prefix)
 
-    if os.path.exists(path) and len(prefix.split('/')[-1]) > 20:
-        os.remove(path)
-        os.remove(path.replace('mp4', 'jpg'))
+    if os.path.exists(path):
+        pool.submit(run_cmd, 'rm -f {}'.format(path))
+        pool.submit(run_cmd, 'rm -f {}'.format(path.replace('mp4', 'jpg')))
     return {}
 
 
@@ -138,8 +142,12 @@ def rename_random():
     final_file = prefix.split('/')[0] + '/' + str(int(time.time())) + '.' + prefix.split('.')[-1]
     cmd = 'mv {} {}'.format(path, os.path.join(parent_path, final_file))
     logging.info("rename cmd: {}".format(cmd))
-    os.system(cmd)
+    pool.submit(run_cmd, cmd)
     return {}
+
+
+def run_cmd(cmd: str):
+    os.system(cmd)
 
 
 @app.route('/img', methods=['GET'])
@@ -161,4 +169,4 @@ def random_bed():
 
 
 if __name__ == '__main__':
-    app.run(port=9001, host='0.0.0.0')
+    app.run(port=9001, host='0.0.0.0', debug=False, threaded=True)

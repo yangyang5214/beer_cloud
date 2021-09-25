@@ -51,16 +51,16 @@
           </template>
 
         </el-table-column>
-        <el-table-column
-            prop="size"
-            label="大小"
-            sortable
-            width="250">
-        </el-table-column>
-        <el-table-column
-            prop="date"
-            label="时间">
-        </el-table-column>
+        <!--        <el-table-column-->
+        <!--            prop="size"-->
+        <!--            label="大小"-->
+        <!--            sortable-->
+        <!--            width="250">-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column-->
+        <!--            prop="date"-->
+        <!--            label="时间">-->
+        <!--        </el-table-column>-->
 
         <el-table-column
             prop="img"
@@ -106,7 +106,7 @@ export default {
       prefix: '',
       storageList: [],
       currentPage: 1,
-      pageSize: 20,
+      pageSize: 10,
       total: 0,
     }
   },
